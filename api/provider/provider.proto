@@ -1,0 +1,35 @@
+syntax = "proto3";
+package management;
+
+option go_package = "github.com/siderolabs/talos-metal-agent/internal/providerpb";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+message ProvisionMachineRequest {
+  string id = 1;
+}
+
+message ProvisionMachineResponse {
+}
+
+message DeprovisionMachineRequest {
+  string id = 1;
+}
+
+message DeprovisionMachineResponse {
+}
+
+message PowerOnMachineRequest {
+  string id = 1;
+}
+
+message PowerOnMachineResponse {
+}
+
+service ProviderService {
+  rpc ProvisionMachine(ProvisionMachineRequest) returns (ProvisionMachineResponse);
+  rpc DeprovisionMachine(DeprovisionMachineRequest) returns (DeprovisionMachineResponse);
+  rpc PowerOnMachine(PowerOnMachineRequest) returns (PowerOnMachineResponse);
+}
