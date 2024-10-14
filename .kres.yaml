@@ -1,0 +1,60 @@
+kind: common.Image
+name: image-metal-agent
+spec:
+  pushLatest: false
+  extraEnvironment:
+    PLATFORM: linux/amd64,linux/arm64
+---
+kind: common.Image
+name: image-provider
+spec:
+  pushLatest: false
+  extraEnvironment:
+    PLATFORM: linux/amd64,linux/arm64
+  copyFrom:
+    - stage: ghcr.io/siderolabs/musl:v1.8.0-16-g71d23b4 # required by zbin
+      source: /
+      destination: /
+    - stage: ghcr.io/siderolabs/liblzma:v1.8.0-16-g71d23b4 # required by zbin
+      source: /
+      destination: /
+    - stage: ghcr.io/siderolabs/openssl:v1.8.0-16-g71d23b4 # required by ipmitool
+      source: /
+      destination: /
+    - stage: ghcr.io/siderolabs/ipmitool:v1.8.0-16-g71d23b4
+      source: /
+      destination: /
+    - stage: ghcr.io/siderolabs/ipxe:v1.8.0-16-g71d23b4
+      source: /usr/libexec/zbin
+      destination: /bin/zbin
+    - stage: ghcr.io/siderolabs/ipxe:v1.8.0-16-g71d23b4@sha256:36f8b53a8bc50186207327f2fc46d383547473ea1b030d0474f43db3b5a29dd1
+      source: /usr/libexec/
+      destination: /var/lib/ipxe/amd64
+    - stage: ghcr.io/siderolabs/ipxe:v1.8.0-16-g71d23b4@sha256:1a704193584f0d8147e47b0e0fb0d4cc8a1102e4ff22f68ae22ccdafd98863ae
+      source: /usr/libexec/
+      destination: /var/lib/ipxe/arm64
+---
+kind: golang.Build
+spec:
+  outputs:
+    linux-amd64:
+      GOOS: linux
+      GOARCH: amd64
+    linux-arm64:
+      GOOS: linux
+      GOARCH: arm64
+---
+kind: golang.Generate
+spec:
+  versionPackagePath: internal/version
+  baseSpecPath: /api
+  vtProtobufEnabled: true
+  specs:
+    - source: api/provider/provider.proto
+      subdirectory: provider
+    - source: api/specs/specs.proto
+      subdirectory: specs
+---
+kind: service.CodeCov
+spec:
+  targetThreshold: 0
