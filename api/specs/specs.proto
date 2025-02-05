@@ -37,6 +37,9 @@ message MachineStatusSpec {
   bool agent_accessible = 1;
   PowerState power_state = 2;
   BootMode last_pxe_boot_mode = 3;
+
+  // TalosPxeBootId is incremented each time we boot (non-agent mode) Talos via PXE.
+  uint64 talos_pxe_boot_id = 4;
 }
 
 message WipeStatusSpec {
@@ -55,6 +58,15 @@ message WipeStatusSpec {
   uint64 last_wipe_install_event_id = 2;
 
   bool initial_wipe_done = 3;
+
+  // LastWipeTalosPxeBootId is set to the same value of MachineStatus.TalosPxeBootId field each time machine gets wiped.
+  //
+  // Using this, the provider is able to track the dirtiness state of the machine. It does it by comparing this stored value
+  // with the value of MachineStatus.TalosPxeBootId field.
+  //
+  // If the value of MachineStatus.TalosPxeBootId field is greater than the value of this field,
+  // it means that the machine was booted (non-agent mode) Talos via PXE, which means it is dirty (we cannot ensure its cleanliness anymore).
+  uint64 last_wipe_talos_pxe_boot_id = 4;
 }
 
 message RebootStatusSpec {

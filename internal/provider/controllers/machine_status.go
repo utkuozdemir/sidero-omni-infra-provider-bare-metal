@@ -345,6 +345,10 @@ func (ctrl *MachineStatusController) handlePXEBootEvent(ctx context.Context, r c
 
 		res.TypedSpec().Value.LastPxeBootMode = pxeBootEvent.Mode
 
+		if pxeBootEvent.Mode == specs.BootMode_BOOT_MODE_TALOS_PXE {
+			res.TypedSpec().Value.TalosPxeBootId++
+		}
+
 		return nil
 	}); err != nil {
 		return err

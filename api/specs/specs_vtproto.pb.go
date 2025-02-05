@@ -103,6 +103,7 @@ func (m *MachineStatusSpec) CloneVT() *MachineStatusSpec {
 	r.AgentAccessible = m.AgentAccessible
 	r.PowerState = m.PowerState
 	r.LastPxeBootMode = m.LastPxeBootMode
+	r.TalosPxeBootId = m.TalosPxeBootId
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -122,6 +123,7 @@ func (m *WipeStatusSpec) CloneVT() *WipeStatusSpec {
 	r.LastWipeId = m.LastWipeId
 	r.LastWipeInstallEventId = m.LastWipeInstallEventId
 	r.InitialWipeDone = m.InitialWipeDone
+	r.LastWipeTalosPxeBootId = m.LastWipeTalosPxeBootId
 	if len(m.unknownFields) > 0 {
 		r.unknownFields = make([]byte, len(m.unknownFields))
 		copy(r.unknownFields, m.unknownFields)
@@ -275,6 +277,9 @@ func (this *MachineStatusSpec) EqualVT(that *MachineStatusSpec) bool {
 	if this.LastPxeBootMode != that.LastPxeBootMode {
 		return false
 	}
+	if this.TalosPxeBootId != that.TalosPxeBootId {
+		return false
+	}
 	return string(this.unknownFields) == string(that.unknownFields)
 }
 
@@ -298,6 +303,9 @@ func (this *WipeStatusSpec) EqualVT(that *WipeStatusSpec) bool {
 		return false
 	}
 	if this.InitialWipeDone != that.InitialWipeDone {
+		return false
+	}
+	if this.LastWipeTalosPxeBootId != that.LastWipeTalosPxeBootId {
 		return false
 	}
 	return string(this.unknownFields) == string(that.unknownFields)
@@ -584,6 +592,11 @@ func (m *MachineStatusSpec) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
 	}
+	if m.TalosPxeBootId != 0 {
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.TalosPxeBootId))
+		i--
+		dAtA[i] = 0x20
+	}
 	if m.LastPxeBootMode != 0 {
 		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.LastPxeBootMode))
 		i--
@@ -636,6 +649,11 @@ func (m *WipeStatusSpec) MarshalToSizedBufferVT(dAtA []byte) (int, error) {
 	if m.unknownFields != nil {
 		i -= len(m.unknownFields)
 		copy(dAtA[i:], m.unknownFields)
+	}
+	if m.LastWipeTalosPxeBootId != 0 {
+		i = protohelpers.EncodeVarint(dAtA, i, uint64(m.LastWipeTalosPxeBootId))
+		i--
+		dAtA[i] = 0x20
 	}
 	if m.InitialWipeDone {
 		i--
@@ -848,6 +866,9 @@ func (m *MachineStatusSpec) SizeVT() (n int) {
 	if m.LastPxeBootMode != 0 {
 		n += 1 + protohelpers.SizeOfVarint(uint64(m.LastPxeBootMode))
 	}
+	if m.TalosPxeBootId != 0 {
+		n += 1 + protohelpers.SizeOfVarint(uint64(m.TalosPxeBootId))
+	}
 	n += len(m.unknownFields)
 	return n
 }
@@ -867,6 +888,9 @@ func (m *WipeStatusSpec) SizeVT() (n int) {
 	}
 	if m.InitialWipeDone {
 		n += 2
+	}
+	if m.LastWipeTalosPxeBootId != 0 {
+		n += 1 + protohelpers.SizeOfVarint(uint64(m.LastWipeTalosPxeBootId))
 	}
 	n += len(m.unknownFields)
 	return n
@@ -1473,6 +1497,25 @@ func (m *MachineStatusSpec) UnmarshalVT(dAtA []byte) error {
 					break
 				}
 			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TalosPxeBootId", wireType)
+			}
+			m.TalosPxeBootId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protohelpers.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TalosPxeBootId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])
@@ -1595,6 +1638,25 @@ func (m *WipeStatusSpec) UnmarshalVT(dAtA []byte) error {
 				}
 			}
 			m.InitialWipeDone = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastWipeTalosPxeBootId", wireType)
+			}
+			m.LastWipeTalosPxeBootId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protohelpers.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LastWipeTalosPxeBootId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := protohelpers.Skip(dAtA[iNdEx:])

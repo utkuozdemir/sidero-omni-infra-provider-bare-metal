@@ -31,9 +31,26 @@ func IsInstalled(infraMachine *infra.Machine, wipeStatus *resources.WipeStatus) 
 	return installEventID > lastWipeInstallEventID
 }
 
+// IsDirty returns true if the machine is dirty.
+//
+// todo: ok, what to do with this now?
+func IsDirty(machineStatus *resources.MachineStatus, wipeStatus *resources.WipeStatus) bool {
+	if machineStatus == nil {
+		return false
+	}
+
+	talosPXEBootID := machineStatus.TypedSpec().Value.TalosPxeBootId
+	lastWipeTaloPXEBootID := uint64(0)
+
+	if wipeStatus != nil {
+		lastWipeTaloPXEBootID = wipeStatus.TypedSpec().Value.LastWipeTalosPxeBootId
+	}
+
+	return talosPXEBootID > lastWipeTaloPXEBootID
+}
+
 // RequiresWipe returns true if the machine needs to be wiped.
 func RequiresWipe(infraMachine *infra.Machine, wipeStatus *resources.WipeStatus) bool {
-	// maybe check acceptance here (or here as well)
 	if infraMachine == nil || wipeStatus == nil || !wipeStatus.TypedSpec().Value.InitialWipeDone {
 		return true
 	}
